@@ -2,7 +2,17 @@ enum ActionKind {
     Walking,
     Idle,
     Jumping,
-    Dead
+    Dead,
+    WalkingRight,
+    WalkingLeft,
+    IdleRight,
+    IdleLeft,
+    JumpRight,
+    FallingRight,
+    JumpLeft,
+    FallingLeft,
+    CrouchRight,
+    CrouchLeft
 }
 namespace SpriteKind {
     export const Trap = SpriteKind.create()
@@ -40,7 +50,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Brick, function (sprite, otherSp
     }
 })
 function 初始化地图信息 () {
-    animation.setAction(Monkey, ActionKind.Walking)
+    animation.setAction(Monkey, ActionKind.IdleRight)
     猴子是否活着 = true
     是否创建指示牌 = false
     是否创建锅盖 = false
@@ -49,47 +59,47 @@ function 初始化地图信息 () {
     for (let 值 of tiles.getTilesByType(sprites.dungeon.floorLight0)) {
         tiles.setWallAt(值, true)
     }
-    for (let 值 of tiles.getTilesByType(assets.tile`myTile10`)) {
-        tiles.setWallAt(值, true)
+    for (let 值2 of tiles.getTilesByType(assets.tile`myTile10`)) {
+        tiles.setWallAt(值2, true)
     }
-    for (let 值 of tiles.getTilesByType(sprites.builtin.brick)) {
-        tiles.setWallAt(值, true)
+    for (let 值3 of tiles.getTilesByType(sprites.builtin.brick)) {
+        tiles.setWallAt(值3, true)
     }
-    for (let 值 of tiles.getTilesByType(assets.tile`myTile4`)) {
-        tiles.setWallAt(值, true)
+    for (let 值4 of tiles.getTilesByType(assets.tile`myTile4`)) {
+        tiles.setWallAt(值4, true)
     }
-    for (let 值 of tiles.getTilesByType(assets.tile`myTile11`)) {
-        tiles.setWallAt(值, true)
+    for (let 值5 of tiles.getTilesByType(assets.tile`myTile11`)) {
+        tiles.setWallAt(值5, true)
     }
-    for (let 值 of tiles.getTilesByType(assets.tile`myTile15`)) {
-        tiles.setWallAt(值, true)
+    for (let 值6 of tiles.getTilesByType(assets.tile`myTile15`)) {
+        tiles.setWallAt(值6, true)
     }
-    for (let 值 of tiles.getTilesByType(assets.tile`myTile`)) {
-        tiles.setWallAt(值, true)
+    for (let 值7 of tiles.getTilesByType(assets.tile`myTile`)) {
+        tiles.setWallAt(值7, true)
     }
     if (是否有存档点) {
-        for (let 值 of tiles.getTilesByType(assets.tile`myTile0`)) {
-            tiles.setTileAt(值, assets.tile`transparency16`)
+        for (let 值8 of tiles.getTilesByType(assets.tile`myTile0`)) {
+            tiles.setTileAt(值8, assets.tile`transparency16`)
         }
-        for (let 值 of tiles.getTilesByType(assets.tile`myTile8`)) {
-            tiles.placeOnTile(Monkey, 值)
-            tiles.setTileAt(值, assets.tile`transparency16`)
+        for (let 值9 of tiles.getTilesByType(assets.tile`myTile8`)) {
+            tiles.placeOnTile(Monkey, 值9)
+            tiles.setTileAt(值9, assets.tile`transparency16`)
         }
     } else {
-        for (let 值 of tiles.getTilesByType(assets.tile`myTile0`)) {
-            tiles.placeOnTile(Monkey, 值)
-            tiles.setTileAt(值, assets.tile`transparency16`)
+        for (let 值10 of tiles.getTilesByType(assets.tile`myTile0`)) {
+            tiles.placeOnTile(Monkey, 值10)
+            tiles.setTileAt(值10, assets.tile`transparency16`)
         }
     }
-    for (let 值 of tiles.getTilesByType(assets.tile`myTile1`)) {
-        指示牌背后的墙壁.push(值)
-        tiles.setTileAt(值, assets.tile`transparency16`)
+    for (let 值11 of tiles.getTilesByType(assets.tile`myTile1`)) {
+        指示牌背后的墙壁.push(值11)
+        tiles.setTileAt(值11, assets.tile`transparency16`)
     }
-    for (let 值 of tiles.getTilesByType(assets.tile`myTile12`)) {
-        锅盖墙壁数组.push(值)
-        tiles.setTileAt(值, assets.tile`transparency16`)
+    for (let 值12 of tiles.getTilesByType(assets.tile`myTile12`)) {
+        锅盖墙壁数组.push(值12)
+        tiles.setTileAt(值12, assets.tile`transparency16`)
     }
-    for (let 值 of tiles.getTilesByType(assets.tile`myTile3`)) {
+    for (let 值13 of tiles.getTilesByType(assets.tile`myTile3`)) {
         mySprite = sprites.create(img`
             1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
             1 1 1 1 1 1 1 1 1 1 f f 1 1 1 1 
@@ -108,8 +118,8 @@ function 初始化地图信息 () {
             1 1 1 1 1 1 1 1 1 f f 1 1 1 1 1 
             1 1 1 1 1 1 1 1 1 1 f 1 1 1 1 1 
             `, SpriteKind.Brick)
-        tiles.placeOnTile(mySprite, 值)
-        tiles.setTileAt(值, assets.tile`transparency16`)
+        tiles.placeOnTile(mySprite, 值13)
+        tiles.setTileAt(值13, assets.tile`transparency16`)
         mySprite.setFlag(SpriteFlag.Invisible, true)
     }
     创建云彩()
@@ -178,6 +188,11 @@ function 创建毒草 () {
         `)
     animation.setAction(mySprite, ActionKind.Idle)
 }
+controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (Monkey.isHittingTile(CollisionDirection.Bottom)) {
+        Monkey.vy = -320
+    }
+})
 function 创建锅盖 () {
     mySprite = sprites.create(img`
         11111111111111111111111111111111111111111111111111111111111111111111111111111111
@@ -349,7 +364,7 @@ function 创建英雄 () {
     scene.cameraFollowSprite(Monkey)
     Monkey.z = 10
     Monkey.setFlag(SpriteFlag.ShowPhysics, false)
-    anim = animation.createAnimation(ActionKind.Walking, 1000)
+    anim = animation.createAnimation(ActionKind.IdleRight, 1000)
     animation.attachAnimation(Monkey, anim)
     anim.addAnimationFrame(img`
         . . . . . . . f f f f f . . . . 
@@ -368,6 +383,26 @@ function 创建英雄 () {
         f e f f e f b b f b d f d b f . 
         f f f f e b d d f d d f d d f . 
         . f f f f f f f f f f f f f . . 
+        `)
+    anim = animation.createAnimation(ActionKind.IdleLeft, 1000)
+    animation.attachAnimation(Monkey, anim)
+    anim.addAnimationFrame(img`
+        . . . . f f f f f . . . . . . . 
+        . . . f e e e e e f . . . . . . 
+        . . f d d d d e e e f . . . . . 
+        . c d f d d f d e e f f . . . . 
+        . c d f d d f d e e d d f . . . 
+        c d e e d d d d e e b d c . . . 
+        c d d d d c d d e e b d c . . . 
+        c c c c c d d e e e f c . . . . 
+        . f d d d d e e e f f . . . . . 
+        . . f f f f f e e e e f . . . . 
+        . . . . f f e e e e e e f . f f 
+        . . . f e e f e e f e e f . e f 
+        . . f e e f e e f e e e f . e f 
+        . f b d f d b f b b f e f f e f 
+        . f d d f d d f d d b e f f f f 
+        . . f f f f f f f f f f f f f . 
         `)
     anim = animation.createAnimation(ActionKind.Dead, 1000)
     animation.attachAnimation(Monkey, anim)
@@ -388,6 +423,274 @@ function 创建英雄 () {
         . . . . . f e e e d d d d f . . 
         . . . . . . f e e e e e f . . . 
         . . . . . . . f f f f f . . . . 
+        `)
+    anim = animation.createAnimation(ActionKind.WalkingRight, 100)
+    animation.attachAnimation(Monkey, anim)
+    anim.addAnimationFrame(img`
+        . . . . . . . f f f f f . . . . 
+        . . . . . . f e e e e e f . . . 
+        . . . . . f e e e d d d d f . . 
+        . . . . f f e e d f d d f d c . 
+        . . . f d d e e d f d d f d c . 
+        . . . c d b e e d d d d e e d c 
+        f f . c d b e e d d c d d d d c 
+        f e f . c f e e d d d c c c c c 
+        f e f . . f f e e d d d d d f . 
+        f e f . f e e e e f f f f f . . 
+        f e f f e e e e e e e f . . . . 
+        . f f e e e e f e f f e f . . . 
+        . . f e e e e f e f f e f . . . 
+        . . . f e f f b d f b d f . . . 
+        . . . f d b b d d c d d f . . . 
+        . . . f f f f f f f f f . . . . 
+        `)
+    anim.addAnimationFrame(img`
+        . . . . . . . f f f f f . . . . 
+        . . . . . . f e e e e e f . . . 
+        . . . . . f e e e d d d d f . . 
+        . . . . . f e e d f d d f d c . 
+        . . . . f f e e d f d d f d c . 
+        . . . f d d e e d d d d e e d c 
+        . . . c d b e e d d c d d d d c 
+        f f . c d b e e e d d c c c c c 
+        f e f . c f f e e e d d d d f . 
+        f e f . f e e e e f f f f f f . 
+        f e f f e e e e e e e f f f f . 
+        . f f e e e e f e f d d f d d f 
+        . . f e e e e f e f b d f b d f 
+        . . f e f f f f f f f f f f f f 
+        . . f d d c f . . . . . . . . . 
+        . . f f f f . . . . . . . . . . 
+        `)
+    anim.addAnimationFrame(img`
+        . . . . . . . f f f f f . . . . 
+        . . . . . . f e e e e e f . . . 
+        . . . . f f e e e d d d d f . . 
+        . . . f d d e e d d d d d d c . 
+        . . . c d b e e d f d d f d c . 
+        f f . c d b e e d f d d f d d c 
+        f e f . c f e e d d d d e e d c 
+        f e f . . f e e e d c d d d d c 
+        f e f . . f f e e e d c c c f . 
+        f e f . f e e e e f f f f f . . 
+        . f f f e e e e e e e f . . . . 
+        . . f e e e e f e e f e f f . . 
+        . . f e e e f f f e e f f e f . 
+        . f b f f f f f f c d d b d d f 
+        . f d d c f . . f d d d c d d f 
+        . . f f f . . . f f f f f f f . 
+        `)
+    anim.addAnimationFrame(img`
+        . . . . . . . f f f f f . . . . 
+        . . . . f f f e e e e e f . . . 
+        . . . f d d e e e e d d d f . . 
+        . . . c d b e e e d d d d d c . 
+        . . . c d b e e d d d d d d c . 
+        . f f . c f e e d f d d f d d c 
+        f e f . . f e e d f d d f d d c 
+        f e f . . f e e d d d d e e d c 
+        f e f . . f f e e d c d d d f . 
+        f e f . f e e e e e d f f f . . 
+        . f f f e e e e e e e f . . . . 
+        . . f f b e e e e e f f . . . . 
+        . . f f d d c e e f f e f . . . 
+        . . . . f f f c d d b d d f . . 
+        . . . . . f f d d d c d d f . . 
+        . . . . . . f f f f f f f . . . 
+        `)
+    anim = animation.createAnimation(ActionKind.WalkingLeft, 100)
+    animation.attachAnimation(Monkey, anim)
+    anim.addAnimationFrame(img`
+        . . . . f f f f f . . . . . . . 
+        . . . f e e e e e f . . . . . . 
+        . . f d d d d e e e f . . . . . 
+        . c d f d d f d e e f f . . . . 
+        . c d f d d f d e e d d f . . . 
+        c d e e d d d d e e b d c . . . 
+        c d d d d c d d e e b d c . f f 
+        c c c c c d d d e e f c . f e f 
+        . f d d d d d e e f f . . f e f 
+        . . f f f f f e e e e f . f e f 
+        . . . . f e e e e e e e f f e f 
+        . . . f e f f e f e e e e f f . 
+        . . . f e f f e f e e e e f . . 
+        . . . f d b f d b f f e f . . . 
+        . . . f d d c d d b b d f . . . 
+        . . . . f f f f f f f f f . . . 
+        `)
+    anim.addAnimationFrame(img`
+        . . . . f f f f f . . . . . . . 
+        . . . f e e e e e f . . . . . . 
+        . . f d d d d e e e f . . . . . 
+        . c d f d d f d e e f . . . . . 
+        . c d f d d f d e e f f . . . . 
+        c d e e d d d d e e d d f . . . 
+        c d d d d c d d e e b d c . . . 
+        c c c c c d d e e e b d c . f f 
+        . f d d d d e e e f f c . f e f 
+        . f f f f f f e e e e f . f e f 
+        . f f f f e e e e e e e f f e f 
+        f d d f d d f e f e e e e f f . 
+        f d b f d b f e f e e e e f . . 
+        f f f f f f f f f f f f e f . . 
+        . . . . . . . . . f c d d f . . 
+        . . . . . . . . . . f f f f . . 
+        `)
+    anim.addAnimationFrame(img`
+        . . . . f f f f f . . . . . . . 
+        . . . f e e e e e f . . . . . . 
+        . . f d d d d e e e f f . . . . 
+        . c d d d d d d e e d d f . . . 
+        . c d f d d f d e e b d c . . . 
+        c d d f d d f d e e b d c . f f 
+        c d e e d d d d e e f c . f e f 
+        c d d d d c d e e e f . . f e f 
+        . f c c c d e e e f f . . f e f 
+        . . f f f f f e e e e f . f e f 
+        . . . . f e e e e e e e f f f . 
+        . . f f e f e e f e e e e f . . 
+        . f e f f e e f f f e e e f . . 
+        f d d b d d c f f f f f f b f . 
+        f d d c d d d f . . f c d d f . 
+        . f f f f f f f . . . f f f . . 
+        `)
+    anim.addAnimationFrame(img`
+        . . . . f f f f f . . . . . . . 
+        . . . f e e e e e f f f . . . . 
+        . . f d d d e e e e d d f . . . 
+        . c d d d d d e e e b d c . . . 
+        . c d d d d d d e e b d c . . . 
+        c d d f d d f d e e f c . f f . 
+        c d d f d d f d e e f . . f e f 
+        c d e e d d d d e e f . . f e f 
+        . f d d d c d e e f f . . f e f 
+        . . f f f d e e e e e f . f e f 
+        . . . . f e e e e e e e f f f . 
+        . . . . f f e e e e e b f f . . 
+        . . . f e f f e e c d d f f . . 
+        . . f d d b d d c f f f . . . . 
+        . . f d d c d d d f f . . . . . 
+        . . . f f f f f f f . . . . . . 
+        `)
+    anim = animation.createAnimation(ActionKind.JumpRight, 100)
+    animation.attachAnimation(Monkey, anim)
+    anim.addAnimationFrame(img`
+        . . . . . . . f f f f f . . . . 
+        . . . . . . f e e e e e f . . . 
+        . . . . . f e e e d d d d f . . 
+        . . . . . f e e d f d d f d c . 
+        . . . . f f e e d f d d f d c . 
+        . . . f d d e e d d d d e e d c 
+        . . . c d b e e d d c d d d d c 
+        f f . c d b e e e d d c c c c c 
+        f e f . c f f e e e d d d d f . 
+        f e f . f e e e e f f f f f f . 
+        f e f f e e e e e e e f f f f . 
+        . f f e e e e f e f d d f d d f 
+        . . f e e e e f e f b d f b d f 
+        . . f e f f f f f f f f f f f f 
+        . . f d d c f . . . . . . . . . 
+        . . f f f f . . . . . . . . . . 
+        `)
+    anim = animation.createAnimation(ActionKind.FallingRight, 100)
+    animation.attachAnimation(Monkey, anim)
+    anim.addAnimationFrame(img`
+        . . . . . . . f f f f f . . . . 
+        . . . . f f f e e e e e f . . . 
+        . . . f d d e e e e d d d f . . 
+        . . . c d b e e e d d d d d c . 
+        . . . c d b e e d d d d d d c . 
+        . f f . c f e e d f d d f d d c 
+        f e f . . f e e d f d d f d d c 
+        f e f . . f e e d d d d e e d c 
+        f e f . . f f e e d c d d d f . 
+        f e f . f e e e e e d f f f . . 
+        . f f f e e e e e e e f . . . . 
+        . . f f b e e e e e f f . . . . 
+        . . f f d d c e e f f e f . . . 
+        . . . . f f f c d d b d d f . . 
+        . . . . . f f d d d c d d f . . 
+        . . . . . . f f f f f f f . . . 
+        `)
+    anim = animation.createAnimation(ActionKind.JumpLeft, 100)
+    animation.attachAnimation(Monkey, anim)
+    anim.addAnimationFrame(img`
+        . . . . f f f f f . . . . . . . 
+        . . . f e e e e e f . . . . . . 
+        . . f d d d d e e e f . . . . . 
+        . c d f d d f d e e f . . . . . 
+        . c d f d d f d e e f f . . . . 
+        c d e e d d d d e e d d f . . . 
+        c d d d d c d d e e b d c . . . 
+        c c c c c d d e e e b d c . f f 
+        . f d d d d e e e f f c . f e f 
+        . f f f f f f e e e e f . f e f 
+        . f f f f e e e e e e e f f e f 
+        f d d f d d f e f e e e e f f . 
+        f d b f d b f e f e e e e f . . 
+        f f f f f f f f f f f f e f . . 
+        . . . . . . . . . f c d d f . . 
+        . . . . . . . . . . f f f f . . 
+        `)
+    anim = animation.createAnimation(ActionKind.FallingLeft, 100)
+    animation.attachAnimation(Monkey, anim)
+    anim.addAnimationFrame(img`
+        . . . . f f f f f . . . . . . . 
+        . . . f e e e e e f f f . . . . 
+        . . f d d d e e e e d d f . . . 
+        . c d d d d d e e e b d c . . . 
+        . c d d d d d d e e b d c . . . 
+        c d d f d d f d e e f c . f f . 
+        c d d f d d f d e e f . . f e f 
+        c d e e d d d d e e f . . f e f 
+        . f d d d c d e e f f . . f e f 
+        . . f f f d e e e e e f . f e f 
+        . . . . f e e e e e e e f f f . 
+        . . . . f f e e e e e b f f . . 
+        . . . f e f f e e c d d f f . . 
+        . . f d d b d d c f f f . . . . 
+        . . f d d c d d d f f . . . . . 
+        . . . f f f f f f f . . . . . . 
+        `)
+    anim = animation.createAnimation(ActionKind.CrouchRight, 100)
+    animation.attachAnimation(Monkey, anim)
+    anim.addAnimationFrame(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . f f f f f . . . . 
+        . . . . . . f e e e e e f . . . 
+        . . . . . f e e e d d d d f . . 
+        . . . . f f e e d d d d d f . . 
+        . . . f d d e e d f f d d d c . 
+        . . . c d b e e d d d d e e d c 
+        . . . c d b e e d d c d d f f c 
+        . . . . f e e e f f f e f d d f 
+        . . . . f f f f f e e e f d d f 
+        . f f . f f e e e e e f f f f f 
+        . f e . f f e e e f f e f f f . 
+        . f e f f f b b f f e f d b f . 
+        . f e f f b d d f e e f d d f . 
+        . . f f f f f f f f f f f f f . 
+        `)
+    anim = animation.createAnimation(ActionKind.CrouchLeft, 100)
+    animation.attachAnimation(Monkey, anim)
+    anim.addAnimationFrame(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . f f f f f . . . . . . . 
+        . . . f e e e e e f . . . . . . 
+        . . f d d d d e e e f . . . . . 
+        . . f d d d d d e e f f . . . . 
+        . c d d d f f d e e d d f . . . 
+        c d e e d d d d e e b d c . . . 
+        c f f d d c d d e e b d c . . . 
+        f d d f e f f f e e e f . . . . 
+        f d d f e e e f f f f f . . . . 
+        f f f f f e e e e e f f . f f . 
+        . f f f e f f e e e f f . e f . 
+        . f b d f e f f b b f f f e f . 
+        . f d d f e e f d d b f f e f . 
+        . f f f f f f f f f f f f f . . 
         `)
 }
 function 初始化变量 () {
@@ -515,20 +818,33 @@ function 初始化变量 () {
         `)
     effects.clouds.startScreenEffect()
     是否有存档点 = false
+    当前关卡 = 1
+    关卡总量 = 6
 }
+controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (Monkey.isHittingTile(CollisionDirection.Bottom)) {
+        Monkey.vy = -320
+    }
+})
 scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile8`, function (sprite, location) {
     是否有存档点 = true
     tiles.setTileAt(location, assets.tile`transparency16`)
 })
 function 更新地图 () {
     删除精灵()
-    tiles.setTilemap(tilemap`级别1`)
+    if (当前关卡 == 1) {
+        tiles.setTilemap(tilemap`级别1`)
+    } else if (当前关卡 == 2) {
+    	
+    } else if (当前关卡 == 3) {
+    	
+    }
     初始化地图信息()
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Cover, function (sprite, otherSprite) {
-    for (let 值 of 锅盖墙壁数组) {
-        tiles.setTileAt(值, assets.tile`myTile10`)
-        tiles.setWallAt(值, true)
+    for (let 值14 of 锅盖墙壁数组) {
+        tiles.setTileAt(值14, assets.tile`myTile10`)
+        tiles.setWallAt(值14, true)
     }
     projectile = sprites.createProjectileFromSide(img`
         ..........fffcc...fffffff.
@@ -568,6 +884,499 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Cover, function (sprite, otherSp
     projectile.setFlag(SpriteFlag.GhostThroughWalls, true)
     projectile.setKind(SpriteKind.Trap)
 })
+function play_song () {
+    music.setVolume(80)
+    // C5
+    timer.background(function () {
+        music.playTone(523, 372)
+    })
+    // C3
+    music.playTone(130, 373)
+    // G4
+    timer.background(function () {
+        music.playTone(391, 372)
+    })
+    // G3
+    music.playTone(195, 373)
+    // C5
+    timer.background(function () {
+        music.playTone(523, 709.5)
+    })
+    // C3
+    music.playTone(130, 710)
+    // G3
+    music.playTone(195, 317)
+    // G4
+    music.playTone(391, 335)
+    // G#4
+    timer.background(function () {
+        music.playTone(415, 279)
+    })
+    // F3
+    music.playTone(174, 279)
+    // G#4
+    music.playTone(415, 92)
+    // G#4
+    timer.background(function () {
+        music.playTone(415, 235.5)
+    })
+    // C4
+    music.playTone(261, 235)
+    // A#4
+    music.playTone(466, 235)
+    // G#4
+    music.playTone(415, 210)
+    // G4
+    timer.background(function () {
+        music.playTone(391, 709.5)
+    })
+    // C3
+    music.playTone(130, 710)
+    // G3
+    music.playTone(195, 317)
+    // D#4
+    music.playTone(311, 335)
+    // F4
+    timer.background(function () {
+        music.playTone(349, 279)
+    })
+    // F3
+    music.playTone(174, 279)
+    // F4
+    music.playTone(349, 92)
+    // F4
+    timer.background(function () {
+        music.playTone(349, 235.5)
+    })
+    // C4
+    music.playTone(261, 235)
+    // G4
+    music.playTone(391, 235)
+    // F4
+    music.playTone(349, 210)
+    // D#4
+    timer.background(function () {
+        music.playTone(311, 532.5)
+    })
+    // C3
+    music.playTone(130, 532)
+    // D4
+    music.playTone(293, 148)
+    // C4
+    timer.background(function () {
+        music.playTone(261, 532.5)
+    })
+    // G3
+    music.playTone(195, 532)
+    // C#4
+    music.playTone(277, 148)
+    // D4
+    timer.background(function () {
+        music.playTone(293, 532.5)
+    })
+    // D3
+    music.playTone(146, 532)
+    // D4
+    music.playTone(293, 148)
+    // D4
+    timer.background(function () {
+        music.playTone(293, 235.5)
+    })
+    // G#3
+    music.playTone(207, 235)
+    // C#4
+    music.playTone(277, 235)
+    // D4
+    music.playTone(293, 210)
+    // G4
+    timer.background(function () {
+        music.playTone(391, 709.5)
+    })
+    // G2
+    music.playTone(97, 710)
+    // F3
+    music.playTone(174, 673)
+    // C5
+    timer.background(function () {
+        music.playTone(523, 372)
+    })
+    // C3
+    music.playTone(130, 373)
+    // G4
+    timer.background(function () {
+        music.playTone(391, 372)
+    })
+    // G3
+    music.playTone(195, 373)
+    // C5
+    timer.background(function () {
+        music.playTone(523, 709.5)
+    })
+    // C3
+    music.playTone(130, 710)
+    // G3
+    music.playTone(195, 317)
+    // G4
+    music.playTone(391, 335)
+    // G#4
+    timer.background(function () {
+        music.playTone(415, 235.5)
+    })
+    // F3
+    music.playTone(174, 235)
+    // G4
+    music.playTone(391, 235)
+    // G#4
+    music.playTone(415, 210)
+    // A#4
+    timer.background(function () {
+        music.playTone(466, 532.5)
+    })
+    // C4
+    music.playTone(261, 532)
+    // G#4
+    music.playTone(415, 92)
+    // G4
+    timer.background(function () {
+        music.playTone(391, 709.5)
+    })
+    // C3
+    music.playTone(130, 710)
+    // G3
+    music.playTone(195, 317)
+    // D#4
+    music.playTone(311, 335)
+    // F4
+    timer.background(function () {
+        music.playTone(349, 235.5)
+    })
+    // C3
+    music.playTone(130, 235)
+    // G4
+    music.playTone(391, 235)
+    // G#4
+    music.playTone(415, 210)
+    // G4
+    timer.background(function () {
+        music.playTone(391, 532.5)
+    })
+    // G3
+    music.playTone(195, 532)
+    // F4
+    music.playTone(349, 148)
+    // G4
+    timer.background(function () {
+        music.playTone(391, 235.5)
+    })
+    // F3
+    music.playTone(174, 235)
+    // C5
+    music.playTone(523, 235)
+    // D5
+    music.playTone(587, 210)
+    // D#5
+    timer.background(function () {
+        music.playTone(622, 532.5)
+    })
+    // C4
+    music.playTone(261, 532)
+    // C5
+    music.playTone(523, 148)
+    // F#4
+    timer.background(function () {
+        music.playTone(369, 372)
+    })
+    // D5
+    timer.background(function () {
+        music.playTone(587, 372)
+    })
+    // A3
+    music.playTone(220, 373)
+    // F4
+    timer.background(function () {
+        music.playTone(349, 372)
+    })
+    // G4
+    timer.background(function () {
+        music.playTone(391, 372)
+    })
+    // B3
+    music.playTone(246, 373)
+    // C5
+    timer.background(function () {
+        music.playTone(523, 709.5)
+    })
+    // G3
+    music.playTone(195, 710)
+    // A#4
+    music.playTone(466, 532)
+    // G#4
+    music.playTone(415, 176)
+    // G4
+    music.playTone(391, 710)
+    // G4
+    timer.background(function () {
+        music.playTone(391, 372)
+    })
+    // A#3
+    music.playTone(233, 373)
+    // G#4
+    music.playTone(415, 176)
+    // A#4
+    music.playTone(466, 710)
+    // G4
+    timer.background(function () {
+        music.playTone(391, 372)
+    })
+    // A#3
+    music.playTone(233, 373)
+    // D#4
+    music.playTone(311, 176)
+    // F4
+    music.playTone(349, 532)
+    // D#4
+    music.playTone(311, 176)
+    // D4
+    timer.background(function () {
+        music.playTone(293, 372)
+    })
+    // A#3
+    music.playTone(233, 373)
+    // C4
+    music.playTone(261, 176)
+    // A#3
+    timer.background(function () {
+        music.playTone(233, 316.5)
+    })
+    // G#3
+    music.playTone(207, 317)
+    // A#3
+    music.playTone(233, 354)
+    // D#4
+    music.playTone(311, 710)
+    // D#4
+    timer.background(function () {
+        music.playTone(311, 372)
+    })
+    // A#3
+    music.playTone(233, 373)
+    // F4
+    music.playTone(349, 176)
+    // G4
+    music.playTone(391, 710)
+    // D#4
+    timer.background(function () {
+        music.playTone(311, 372)
+    })
+    // A#3
+    music.playTone(233, 373)
+    // F4
+    timer.background(function () {
+        music.playTone(349, 316.5)
+    })
+    // A#3
+    music.playTone(233, 317)
+    // F4
+    music.playTone(349, 176)
+    // G4
+    music.playTone(391, 176)
+    // F4
+    timer.background(function () {
+        music.playTone(349, 316.5)
+    })
+    // A#3
+    music.playTone(233, 317)
+    // G4
+    music.playTone(391, 354)
+    // G#4
+    music.playTone(415, 710)
+    // G#4
+    timer.background(function () {
+        music.playTone(415, 372)
+    })
+    // G#3
+    music.playTone(207, 373)
+    // A#4
+    music.playTone(466, 176)
+    // G4
+    music.playTone(391, 710)
+    // D#4
+    timer.background(function () {
+        music.playTone(311, 372)
+    })
+    // A#3
+    music.playTone(233, 373)
+    // F4
+    music.playTone(349, 710)
+    // G4
+    timer.background(function () {
+        music.playTone(391, 372)
+    })
+    // A#3
+    music.playTone(233, 373)
+    // D#4
+    timer.background(function () {
+        music.playTone(311, 372)
+    })
+    // G3
+    music.playTone(195, 373)
+    // F4
+    timer.background(function () {
+        music.playTone(349, 316.5)
+    })
+    // F3
+    music.playTone(174, 317)
+    // F4
+    music.playTone(349, 176)
+    // G4
+    music.playTone(391, 176)
+    // A4
+    timer.background(function () {
+        music.playTone(440, 709.5)
+    })
+    // F3
+    music.playTone(174, 710)
+    // C5
+    music.playTone(523, 710)
+    // A#4
+    timer.background(function () {
+        music.playTone(466, 1422)
+    })
+    // A#3
+    music.playTone(233, 1423)
+    // G#4
+    timer.background(function () {
+        music.playTone(415, 184.5)
+    })
+    // F3
+    timer.background(function () {
+        music.playTone(174, 184.5)
+    })
+    // A#3
+    music.playTone(233, 185)
+    // G4
+    timer.background(function () {
+        music.playTone(391, 316.5)
+    })
+    // A#3
+    music.playTone(233, 317)
+    // G4
+    music.playTone(391, 176)
+    // G#4
+    music.playTone(415, 176)
+    // A#4
+    music.playTone(466, 710)
+    // G4
+    timer.background(function () {
+        music.playTone(391, 372)
+    })
+    // G3
+    music.playTone(195, 373)
+    // F4
+    timer.background(function () {
+        music.playTone(349, 372)
+    })
+    // A#3
+    music.playTone(233, 373)
+    // B3
+    music.playTone(246, 373)
+    // D#4
+    timer.background(function () {
+        music.playTone(311, 372)
+    })
+    // G3
+    music.playTone(195, 373)
+    // F4
+    music.playTone(349, 176)
+    // G4
+    music.playTone(391, 710)
+    // D#4
+    timer.background(function () {
+        music.playTone(311, 372)
+    })
+    // G3
+    music.playTone(195, 373)
+    // D4
+    timer.background(function () {
+        music.playTone(293, 372)
+    })
+    // A#3
+    music.playTone(233, 373)
+    // A#3
+    music.playTone(233, 373)
+    // C4
+    music.playTone(261, 710)
+    // C4
+    timer.background(function () {
+        music.playTone(261, 372)
+    })
+    // G#3
+    music.playTone(207, 373)
+    // D4
+    music.playTone(293, 176)
+    // D#4
+    music.playTone(311, 710)
+    // G#4
+    timer.background(function () {
+        music.playTone(415, 372)
+    })
+    // G#3
+    music.playTone(207, 373)
+    // G4
+    music.playTone(391, 710)
+    // F4
+    timer.background(function () {
+        music.playTone(349, 372)
+    })
+    // F3
+    music.playTone(174, 373)
+    // G4
+    music.playTone(391, 176)
+    // D#4
+    timer.background(function () {
+        music.playTone(311, 316.5)
+    })
+    // G3
+    music.playTone(195, 317)
+    // D#4
+    music.playTone(311, 354)
+    // G4
+    music.playTone(391, 532)
+    // D#4
+    music.playTone(311, 176)
+    // A#3
+    timer.background(function () {
+        music.playTone(233, 372)
+    })
+    // F3
+    music.playTone(174, 373)
+    // G4
+    music.playTone(391, 176)
+    // F4
+    music.playTone(349, 532)
+    // D#4
+    music.playTone(311, 176)
+    // D4
+    timer.background(function () {
+        music.playTone(293, 372)
+    })
+    // F3
+    music.playTone(174, 373)
+    // F4
+    music.playTone(349, 176)
+    // D#4
+    timer.background(function () {
+        music.playTone(311, 709.5)
+    })
+    // A#3
+    music.playTone(233, 710)
+    // D4
+    timer.background(function () {
+        music.playTone(293, 1422)
+    })
+    // A#3
+    music.playTone(233, 1423)
+}
 function 创建指示牌 () {
     是否创建指示牌 = true
     mySprite = sprites.create(img`
@@ -688,8 +1497,8 @@ function 创建指示牌 () {
         ..ff....ff.....ff.....fff...ff.....ff...fff....ff.....ff....ff.....ff....ff..ff.
         `)
     animation.setAction(mySprite, ActionKind.Idle)
-    for (let 值 of 指示牌背后的墙壁) {
-        tiles.setWallAt(值, true)
+    for (let 值15 of 指示牌背后的墙壁) {
+        tiles.setWallAt(值15, true)
     }
 }
 function 创建栅栏 () {
@@ -747,20 +1556,23 @@ function 创建栅栏 () {
     mySprite.y += -16
 }
 function 删除精灵 () {
-    for (let 值 of sprites.allOfKind(SpriteKind.Trap)) {
-        值.destroy()
+    for (let 值16 of sprites.allOfKind(SpriteKind.Trap)) {
+        值16.destroy()
     }
-    for (let 值 of sprites.allOfKind(SpriteKind.Cover)) {
-        值.destroy()
+    for (let 值17 of sprites.allOfKind(SpriteKind.Cover)) {
+        值17.destroy()
     }
-    for (let 值 of sprites.allOfKind(SpriteKind.Brick)) {
-        值.destroy()
+    for (let 值18 of sprites.allOfKind(SpriteKind.Brick)) {
+        值18.destroy()
     }
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile14`, function (sprite, location) {
     tiles.setTileAt(location, assets.tile`transparency16`)
 })
+let 猴子面向左吗 = false
 let projectile: Sprite = null
+let 关卡总量 = 0
+let 当前关卡 = 0
 let anim: animation.Animation = null
 let mySprite: Sprite = null
 let 是否有存档点 = false
@@ -775,6 +1587,44 @@ let 猴子是否活着 = false
 更新地图()
 game.showLongText("你能拯救公主吗？", DialogLayout.Center)
 game.onUpdate(function () {
+    if (猴子是否活着) {
+        if (Monkey.vx < 0) {
+            猴子面向左吗 = true
+        } else if (Monkey.vx > 0) {
+            猴子面向左吗 = false
+        }
+    }
+    if (controller.down.isPressed()) {
+        if (猴子面向左吗) {
+            animation.setAction(Monkey, ActionKind.CrouchLeft)
+        } else {
+            animation.setAction(Monkey, ActionKind.CrouchRight)
+        }
+    } else if (Monkey.vy < 0 && !(Monkey.isHittingTile(CollisionDirection.Bottom))) {
+        if (猴子面向左吗) {
+            animation.setAction(Monkey, ActionKind.JumpLeft)
+        } else {
+            animation.setAction(Monkey, ActionKind.JumpRight)
+        }
+    } else if (Monkey.vy > 0 && !(Monkey.isHittingTile(CollisionDirection.Bottom))) {
+        if (猴子面向左吗) {
+            animation.setAction(Monkey, ActionKind.FallingLeft)
+        } else {
+            animation.setAction(Monkey, ActionKind.FallingRight)
+        }
+    } else if (Monkey.vx < 0) {
+        animation.setAction(Monkey, ActionKind.WalkingLeft)
+    } else if (Monkey.vx > 0) {
+        animation.setAction(Monkey, ActionKind.WalkingRight)
+    } else {
+        if (猴子面向左吗) {
+            animation.setAction(Monkey, ActionKind.IdleLeft)
+        } else {
+            animation.setAction(Monkey, ActionKind.IdleRight)
+        }
+    }
+})
+game.onUpdate(function () {
     if (!(猴子是否活着) && Monkey.isHittingTile(CollisionDirection.Bottom)) {
         game.showLongText("猴骑士挂了~", DialogLayout.Top)
         更新地图()
@@ -783,4 +1633,7 @@ game.onUpdate(function () {
         animation.setAction(Monkey, ActionKind.Dead)
         猴子是否活着 = false
     }
+})
+forever(function () {
+    play_song()
 })
